@@ -85,6 +85,7 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 */
 	public AnnotationConfigApplicationContext(Class<?>... componentClasses) {
 		this();
+		//执行完该方法完成传入构造函数的class的扫描，即将它放入bdmap中
 		register(componentClasses);
 		refresh();
 	}

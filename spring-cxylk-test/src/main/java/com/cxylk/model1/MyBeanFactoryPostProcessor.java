@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * @Author likui
  * @Date 2021/6/26 18:17
  **/
-@Component
+//@Component
 public class MyBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
     /**
      * 执行时机：扫描完成之后，也就是类变成BeanDefinition之后，在实例化之前

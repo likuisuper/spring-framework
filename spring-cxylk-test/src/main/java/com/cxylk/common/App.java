@@ -1,4 +1,4 @@
-package com.cxylk.model1;
+package com.cxylk.common;
 
 import org.springframework.context.annotation.ComponentScan;
 
@@ -8,6 +8,6 @@ import org.springframework.context.annotation.ComponentScan;
  * @Author likui
  * @Date 2021/6/30 16:38
  **/
-@ComponentScan("com.cxylk.model1")
+@ComponentScan("com.cxylk")
 public class App {
 }

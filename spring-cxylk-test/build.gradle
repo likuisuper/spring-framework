@@ -12,6 +12,15 @@ repositories {
 }
 
 dependencies {
+    //mybatis-spring
+    compile group: 'org.mybatis', name: 'mybatis-spring', version: '2.0.5'
+
+    //mybatis core
+    compile group: 'org.mybatis', name: 'mybatis', version: '3.5.0'
+    //连接池
+    compile(project(":spring-jdbc"))
+    //driver
+    compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.20'
     compile(project(":spring-context"))
     compile("org.slf4j:slf4j-api:1.7.21")
     compile("org.slf4j:slf4j-log4j12:1.7.21")

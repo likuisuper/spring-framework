@@ -427,13 +427,17 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 				if (resource.isReadable()) {
 					try {
 						MetadataReader metadataReader = getMetadataReaderFactory().getMetadataReader(resource);
+						//判断一个给类是否被过滤，到底该不该转换为BeanDefinition
 						if (isCandidateComponent(metadataReader)) {
+							//转换成BeanDefinition
 							ScannedGenericBeanDefinition sbd = new ScannedGenericBeanDefinition(metadataReader);
 							sbd.setSource(resource);
+							//第二个if判断是不是接口，Mapper就是接口，所以会进入
 							if (isCandidateComponent(sbd)) {
 								if (debugEnabled) {
 									logger.debug("Identified candidate component class: " + resource);
 								}
+								//添加进BeanDefinition集合中
 								candidates.add(sbd);
 							}
 							else {
@@ -491,6 +495,7 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 				return false;
 			}
 		}
+		//这个list集合中的过滤器就是MapperScannerConfigurer中scanner.registerFilters()添加进来的
 		for (TypeFilter tf : this.includeFilters) {
 			if (tf.match(metadataReader, getMetadataReaderFactory())) {
 				return isConditionMatch(metadataReader);
@@ -521,6 +526,7 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 	 * @param beanDefinition the bean definition to check
 	 * @return whether the bean definition qualifies as a candidate component
 	 */
+	//mybatis重写了该方法，ClassPathMapperScanner类中
 	protected boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
 		AnnotationMetadata metadata = beanDefinition.getMetadata();
 		return (metadata.isIndependent() && (metadata.isConcrete() ||

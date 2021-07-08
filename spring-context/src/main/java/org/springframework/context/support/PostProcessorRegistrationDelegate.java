@@ -121,6 +121,7 @@ final class PostProcessorRegistrationDelegate {
 			//那么就不用再找父类了，因为子类一定属于父类
 			registryProcessors.addAll(currentRegistryProcessors);
 			//现在执行的是ConfigurationClassPostProcessor的postProcessBeanDefinitionRegistry方法，确定候选组件类
+			//会将扫描路径下加了注解比如@Component的类对应的beanDefinition放入bdmp中
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
 			//执行完上述方法后，将当前list clear掉
 			currentRegistryProcessors.clear();

@@ -180,8 +180,13 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	protected Object getSingleton(String beanName, boolean allowEarlyReference) {
 		// Quick check for existing instance without full singleton lock
 		Object singletonObject = this.singletonObjects.get(beanName);
+		//如果单例池即一级缓存中为空，并且当前bean在正在被创建的集合中（什么意思？比如M中注入了N，N里面注入了M，即发生了循环依赖)
+		//首先会将M放入singletonsCurrentlyInCreation这个集合中，当创建完M对象并将它放入三级缓存中，然后进行属性填充的时候，会触发N的实例化和属性填充，而创建完N对象并将它放入三级缓存中后，
+		//又会去填充M属性，此时走到这里，beanName就是M，这M就在这个set集合中，所以会走这个if循环
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
+			//先从二级缓存中找
 			singletonObject = this.earlySingletonObjects.get(beanName);
+			//为空并且允许循环依赖
 			if (singletonObject == null && allowEarlyReference) {
 				synchronized (this.singletonObjects) {
 					// Consistent creation of early reference within full singleton lock
@@ -189,10 +194,13 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					if (singletonObject == null) {
 						singletonObject = this.earlySingletonObjects.get(beanName);
 						if (singletonObject == null) {
+							//从三级缓存中获取
 							ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
 							if (singletonFactory != null) {
 								singletonObject = singletonFactory.getObject();
+								//放入二级缓存
 								this.earlySingletonObjects.put(beanName, singletonObject);
+								//然后将当前beanName从三级缓存中remove掉
 								this.singletonFactories.remove(beanName);
 							}
 						}
@@ -225,6 +233,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 				if (logger.isDebugEnabled()) {
 					logger.debug("Creating shared instance of singleton bean '" + beanName + "'");
 				}
+				//检查并将beanName放入正在创建bean的set集合，为了解决循环依赖的问题
 				beforeSingletonCreation(beanName);
 				boolean newSingleton = false;
 				boolean recordSuppressedExceptions = (this.suppressedExceptions == null);
@@ -232,13 +241,14 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					this.suppressedExceptions = new LinkedHashSet<>();
 				}
 				try {
+					//执行lambda表达式，进入doGetBean中的createBean方法
+					//执行完bean的实例化后继续回到这里
 					singletonObject = singletonFactory.getObject();
 					newSingleton = true;
 				}
 				catch (IllegalStateException ex) {
 					// Has the singleton object implicitly appeared in the meantime ->
 					// if yes, proceed with it since the exception indicates that state.
-					//进入doGetBean中的createBean方法
 					singletonObject = this.singletonObjects.get(beanName);
 					if (singletonObject == null) {
 						throw ex;
@@ -256,9 +266,12 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					if (recordSuppressedExceptions) {
 						this.suppressedExceptions = null;
 					}
+
 					afterSingletonCreation(beanName);
 				}
 				if (newSingleton) {
+					//实例化bean之后，继续回到该方法，然后执行到这里
+					//将beanName作为key，bean对象作为value放入单例池singletonObjects中
 					addSingleton(beanName, singletonObject);
 				}
 			}

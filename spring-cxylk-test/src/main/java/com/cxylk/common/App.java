@@ -8,6 +8,6 @@ import org.springframework.context.annotation.ComponentScan;
  * @Author likui
  * @Date 2021/6/30 16:38
  **/
-@ComponentScan("com.cxylk")
+@ComponentScan("com.cxylk.model5")
 public class App {
 }

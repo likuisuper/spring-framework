@@ -29,13 +29,15 @@ public class Test {
 		AnnotationConfigApplicationContext ac=new AnnotationConfigApplicationContext();
 
 		//手动提供
-		ac.addBeanFactoryPostProcessor(new Z());
-		ac.addBeanFactoryPostProcessor(new Y());
+//		ac.addBeanFactoryPostProcessor(new Z());
+//		ac.addBeanFactoryPostProcessor(new Y());
 
 		//手动提供给spring，而不是以扫描的方式
 //		ac.getBeanFactory().registerSingleton("x",new X());
 		ac.register(App.class);
 		ac.refresh();
+
+		ac.getBean("m");
 
 //		ac.getBean("x");
 	}
